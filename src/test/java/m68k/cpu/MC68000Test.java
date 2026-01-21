@@ -1,8 +1,11 @@
 package m68k.cpu;
 
 import junit.framework.TestCase;
+import m68k.common.DataSize;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
+
+import static m68k.common.DataSize.ofKilobytes;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -33,7 +36,7 @@ public class MC68000Test extends TestCase {
     Cpu cpu;
 
     public void setUp() {
-        bus = new MemorySpace(1);    //create 1kb of memory for the cpu
+        bus = new MemorySpace(ofKilobytes(1));
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
         cpu.reset();

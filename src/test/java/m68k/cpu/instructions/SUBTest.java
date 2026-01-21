@@ -15,12 +15,14 @@ import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 
+import static m68k.common.DataSize.ofKilobytes;
+
 public class SUBTest extends TestCase {
     AddressSpace bus;
     Cpu cpu;
 
     public void setUp() {
-        bus = new MemorySpace(1);    //create 1kb of memory for the cpu
+        bus = new MemorySpace(ofKilobytes(1));
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
         cpu.reset();

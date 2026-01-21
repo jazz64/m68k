@@ -7,6 +7,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 
+import static m68k.common.DataSize.ofMegabytes;
+
 // $Revision: 21 $
 @Ignore
 public class BasicSetup extends TestCase {
@@ -18,7 +20,7 @@ public class BasicSetup extends TestCase {
 
     @Before
     protected void setUp() {
-        SystemModel.MEM = TestMem.create(2048);
+        SystemModel.MEM = TestMem.create(ofMegabytes(2));
         SystemModel.CPU = new TestCpu(SystemModel.MEM);
 
         //test vectors just containing the vector number

@@ -8,6 +8,8 @@ import miggy.TestCpu;
 import miggy.memory.TestMem;
 import org.junit.Before;
 
+import static m68k.common.DataSize.ofKilobytes;
+
 /*
 //  Miggy - Java Amiga MachineCore
 //  Copyright (c) 2008, Tony Headford
@@ -43,7 +45,7 @@ public class M68000Test extends TestCase {
     @Before
     protected void setUp() {
         //set up memory
-        SystemModel.MEM = TestMem.create(512);
+        SystemModel.MEM = TestMem.create(ofKilobytes(512));
         SystemModel.CPU = new TestCpu(SystemModel.MEM);
         cpu = SystemModel.CPU;
     }
@@ -153,7 +155,7 @@ public class M68000Test extends TestCase {
 
     public void testPC() {
         //set up memory
-        SystemModel.MEM = TestMem.create(512);
+        SystemModel.MEM = TestMem.create(ofKilobytes(512));
         SystemModel.CPU = new TestCpu(SystemModel.MEM);
         cpu = SystemModel.CPU;
 

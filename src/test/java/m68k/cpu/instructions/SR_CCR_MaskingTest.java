@@ -7,6 +7,8 @@ import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
 import org.junit.Assert;
 
+import static m68k.common.DataSize.ofKilobytes;
+
 /**
  * Federico Berti
  * <p>
@@ -19,7 +21,7 @@ public class SR_CCR_MaskingTest extends TestCase {
     int stack = 0x200;
 
     public void setUp() {
-        bus = new MemorySpace(1);    //create 1kb of memory for the cpu
+        bus = new MemorySpace(ofKilobytes(1));
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
         cpu.reset();

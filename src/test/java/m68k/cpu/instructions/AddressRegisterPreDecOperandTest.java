@@ -1,15 +1,17 @@
 package m68k.cpu.instructions;
 
-import org.junit.Assert;
 import junit.framework.TestCase;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
+import org.junit.Assert;
 
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static m68k.common.DataSize.ofKilobytes;
 
 /**
  * ${FILE}
@@ -26,8 +28,7 @@ public class AddressRegisterPreDecOperandTest extends TestCase {
     Map<Integer, Integer> wordWrites = new LinkedHashMap<>();
 
     public void setUp() {
-        //create 1kb of memory for the cpu
-        bus = new MemorySpace(1) {
+        bus = new MemorySpace(ofKilobytes(1)) {
             @Override
             public void writeWord(int addr, int value) {
                 wordWrites.put(addr, value);

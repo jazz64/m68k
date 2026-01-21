@@ -2,6 +2,8 @@ package m68k.memory;
 
 import junit.framework.TestCase;
 
+import static m68k.common.DataSize.ofKilobytes;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -28,15 +30,15 @@ import junit.framework.TestCase;
 */
 public class MemorySpaceTest extends TestCase {
     public void testCreate() {
-        AddressSpace bus = new MemorySpace(4);
+        AddressSpace bus = new MemorySpace(ofKilobytes(4));
         assertEquals(4096, bus.size());
 
-        bus = new MemorySpace(32);
+        bus = new MemorySpace(ofKilobytes(32));
         assertEquals(32768, bus.size());
     }
 
     public void testMemory() {
-        AddressSpace bus = new MemorySpace(1);
+        AddressSpace bus = new MemorySpace(ofKilobytes(1));
         bus.writeByte(4, 0x55);
         assertEquals(0x55000000, bus.readLong(4));
         assertEquals(0x5500, bus.readWord(4));
