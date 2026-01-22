@@ -1,12 +1,14 @@
 package m68k.cpu.instructions;
 
-import junit.framework.TestCase;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static m68k.common.DataSize.ofKilobytes;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * ${FILE}
@@ -17,13 +19,14 @@ import static m68k.common.DataSize.ofKilobytes;
  * <p>
  * Copyright 2019
  */
-public class NegxTest extends TestCase {
+class NegxTest {
 
     AddressSpace bus;
     Cpu cpu;
     int stack = 0x200;
 
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         bus = new MemorySpace(ofKilobytes(1));
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
@@ -31,11 +34,13 @@ public class NegxTest extends TestCase {
         cpu.setAddrRegisterLong(7, stack);
     }
 
-    public void testNegx01() {
+    @Test
+    void testNegx01() {
         negxInternal();
     }
 
-    public void testNegx02() {
+    @Test
+    void testNegx02() {
         cpu.setFlags(Cpu.Z_FLAG);
         negxInternal();
     }

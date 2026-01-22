@@ -1,24 +1,18 @@
 package miggy;
 
-import junit.framework.TestCase;
 import m68k.cpu.Size;
 import miggy.memory.TestMem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
 
 import static m68k.common.DataSize.ofMegabytes;
 
 // $Revision: 21 $
-@Ignore
-public class BasicSetup extends TestCase {
+public class BasicSetup {
     protected int codebase;
 
-    public BasicSetup(String test) {
-        super(test);
+    public BasicSetup() {
+        setUp();
     }
 
-    @Before
     protected void setUp() {
         SystemModel.MEM = TestMem.create(ofMegabytes(2));
         SystemModel.CPU = new TestCpu(SystemModel.MEM);
@@ -49,11 +43,5 @@ public class BasicSetup extends TestCase {
     protected void setInstructionParamL(int opcode, int param) {
         SystemModel.MEM.poke(codebase, opcode, Size.Word);
         SystemModel.MEM.poke(codebase + 2, param, Size.Long);
-    }
-
-    @After
-    protected void tearDown() {
-        SystemModel.CPU = null;
-        SystemModel.MEM = null;
     }
 }

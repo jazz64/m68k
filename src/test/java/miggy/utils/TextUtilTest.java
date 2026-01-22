@@ -1,15 +1,14 @@
 package miggy.utils;
 
-import junit.framework.TestCase;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 // $Revision: 16 $
 //TODO
-public class TextUtilTest extends TestCase {
-    public TextUtilTest(String test) {
-        super(test);
-    }
-
-    public void testDecodeRegList() {
+class TextUtilTest {
+    @Test
+    @Disabled
+    void testDecodeRegList() {
 //		int list = 0x00c0;
 //		String s = TextUtil.decodeRegList(list, false);
 //		assertEquals("Two together", "d6/d7", s);

@@ -1,76 +1,78 @@
 package miggy;
 
 import m68k.cpu.Size;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 // $Revision: 21 $
 
-public class SignTest extends BasicSetup {
-    public SignTest(String test) {
-        super(test);
-    }
-
+class SignTest extends BasicSetup {
     @Test
-    public void testSignExtendByte() {
+    void testSignExtendByte() {
         SystemModel.MEM.poke(codebase, 0x80, Size.Byte);
 
         int val = SystemModel.MEM.peek(codebase, Size.Byte);
 
-        assertTrue("Byte not sign extended", val >= 0);
+        assertTrue(val >= 0, "Byte not sign extended");
 
         val = (byte) SystemModel.MEM.peek(codebase, Size.Byte);
 
-        assertTrue("Byte sign extended", val < 0);
+        assertTrue(val < 0, "Byte sign extended");
     }
 
-
-    public void testSignExtendWord() {
+    @Test
+    void testSignExtendWord() {
         SystemModel.MEM.poke(codebase, 0x8000, Size.Word);
 
         int val = SystemModel.MEM.peek(codebase, Size.Word);
 
-        assertTrue("Word not sign extended", val >= 0);
+        assertTrue(val >= 0, "Word not sign extended");
 
         val = (short) SystemModel.MEM.peek(codebase, Size.Word);
 
-        assertTrue("Word sign extended", val < 0);
+        assertTrue(val < 0, "Word sign extended");
     }
 
-    public void testSignExtendFetchByte() {
+    @Test
+    void testSignExtendFetchByte() {
         //fetch will always read 2 bytes if Size.Byte
         SystemModel.MEM.poke(codebase, 0x0080, Size.Word);
 
         int val = SystemModel.CPU.fetch(Size.Byte);
-        assertTrue("Byte not sign extended", val >= 0);
-        assertEquals("Byte fetch", 0x0080, val);
+        assertTrue(val >= 0, "Byte not sign extended");
+        assertEquals(0x0080, val, "Byte fetch");
 
         //reset PC
         SystemModel.CPU.setPC(codebase);
         val = (byte) SystemModel.CPU.fetch(Size.Byte);
-        assertTrue("Byte sign extended", val < 0);
+        assertTrue(val < 0, "Byte sign extended");
     }
 
-    public void testSignExtendFetchWord() {
+    @Test
+    void testSignExtendFetchWord() {
         SystemModel.MEM.poke(codebase, 0x8000, Size.Word);
 
         int val = SystemModel.CPU.fetch(Size.Word);
-        assertTrue("Word not sign extended", val >= 0);
-        assertEquals("Word fetch", 0x8000, val);
+        assertTrue(val >= 0, "Word not sign extended");
+        assertEquals(0x8000, val, "Word fetch");
 
         //reset PC
         SystemModel.CPU.setPC(codebase);
         val = (short) SystemModel.CPU.fetch(Size.Word);
-        assertTrue("Word sign extended", val < 0);
+        assertTrue(val < 0, "Word sign extended");
     }
 
-    public void testSizeSignExtend() {
+    @Test
+    void testSizeSignExtend() {
         int val = 0x0080;
 
         int result = SystemModel.CPU.signExtendByte(val);
-        assertTrue("Byte sign extended", result < 0);
+        assertTrue(result < 0, "Byte sign extended");
 
         val = 0x8000;
         result = SystemModel.CPU.signExtendWord(val);
-        assertTrue("Word sign extended", result < 0);
+        assertTrue(result < 0, "Word sign extended");
     }
 }

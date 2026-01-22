@@ -3,43 +3,46 @@ package miggy.cpu.instructions.move;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 // $Revision: 21 $
-public class MOVE_2_SRTest extends BasicSetup {
-    public MOVE_2_SRTest(String test) {
-        super(test);
-    }
-
-    public void testMove() {
+class MOVE_2_SRTest extends BasicSetup {
+    @Test
+    void testMove() {
         setInstruction(0x46c0);    //move d0,sr
         SystemModel.CPU.setDataRegister(0, 0x2015);
 
         SystemModel.CPU.setSR((short) 0x2000);    //set supervisor bit
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check SR", (short) 0x2015, SystemModel.CPU.getSR());
-        assertTrue("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertTrue("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertTrue("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals((short) 0x2015, SystemModel.CPU.getSR(), "Check SR");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 
-    public void testMoveException() {
+    @Test
+    void testMoveException() {
         setInstruction(0x46c0);    //move d0,sr
         SystemModel.CPU.setDataRegister(0, 0x2015);
 
         SystemModel.CPU.setSR((short) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check SR", 0x2000, SystemModel.CPU.getSR()); //supervisor bit set
-        assertEquals("Check PC", 8, SystemModel.CPU.getPC());    //privilege violation exception
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        //supervisor bit set
+        assertEquals(0x2000, SystemModel.CPU.getSR(), "Check SR");
+        //privilege violation exception
+        assertEquals(8, SystemModel.CPU.getPC(), "Check PC");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 }

@@ -4,14 +4,14 @@ import m68k.cpu.Size;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 // $Revision: 21 $
-public class CMPMTest extends BasicSetup {
-    public CMPMTest(String test) {
-        super(test);
-    }
-
-    public void testByte() {
+class CMPMTest extends BasicSetup {
+    @Test
+    void testByte() {
         setInstruction(0xb308);    //cmpm.b (a0)+, (a1)+
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
@@ -20,18 +20,19 @@ public class CMPMTest extends BasicSetup {
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check A0", 33, SystemModel.CPU.getAddrRegister(0));
-        assertEquals("Check A1", 41, SystemModel.CPU.getAddrRegister(1));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertTrue("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
+        assertEquals(33, SystemModel.CPU.getAddrRegister(0), "Check A0");
+        assertEquals(41, SystemModel.CPU.getAddrRegister(1), "Check A1");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
     }
 
-    public void testWord() {
+    @Test
+    void testWord() {
         setInstruction(0xb348);    //cmpm.w (a0)+,(a1)+
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
@@ -40,18 +41,19 @@ public class CMPMTest extends BasicSetup {
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check A0", 34, SystemModel.CPU.getAddrRegister(0));
-        assertEquals("Check A1", 42, SystemModel.CPU.getAddrRegister(1));
-        assertTrue("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertTrue("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertTrue("Check C", SystemModel.CPU.isSet(CpuFlag.C));
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
+        assertEquals(34, SystemModel.CPU.getAddrRegister(0), "Check A0");
+        assertEquals(42, SystemModel.CPU.getAddrRegister(1), "Check A1");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
     }
 
-    public void testLong() {
+    @Test
+    void testLong() {
         setInstruction(0xb388);    //cmpm.l (a0)+,(a1)+
         SystemModel.CPU.setAddrRegister(0, 32);
         SystemModel.MEM.poke(32, 0x87654321, Size.Long);
@@ -60,14 +62,14 @@ public class CMPMTest extends BasicSetup {
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check A0", 36, SystemModel.CPU.getAddrRegister(0));
-        assertEquals("Check A1", 44, SystemModel.CPU.getAddrRegister(1));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
+        assertEquals(36, SystemModel.CPU.getAddrRegister(0), "Check A0");
+        assertEquals(44, SystemModel.CPU.getAddrRegister(1), "Check A1");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
     }
 }

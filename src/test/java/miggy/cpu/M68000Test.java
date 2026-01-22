@@ -1,14 +1,16 @@
 package miggy.cpu;
 
-import junit.framework.TestCase;
 import m68k.cpu.Instruction;
 import m68k.cpu.Size;
 import miggy.SystemModel;
 import miggy.TestCpu;
 import miggy.memory.TestMem;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static m68k.common.DataSize.ofKilobytes;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
 //  Miggy - Java Amiga MachineCore
@@ -35,34 +37,31 @@ import static m68k.common.DataSize.ofKilobytes;
 //
 // $Revision: 21 $
 */
-public class M68000Test extends TestCase {
+class M68000Test {
     protected TestCpu cpu;
 
-    public M68000Test(String test) {
-        super(test);
-    }
-
-    @Before
-    protected void setUp() {
+    @BeforeEach
+    void setUp() {
         //set up memory
         SystemModel.MEM = TestMem.create(ofKilobytes(512));
         SystemModel.CPU = new TestCpu(SystemModel.MEM);
         cpu = SystemModel.CPU;
     }
 
-    @Override
-    protected void tearDown() {
+    @AfterEach
+    void tearDown() {
         cpu = null;
     }
 
-    public void testDataRegisters() {
+    @Test
+    void testDataRegisters() {
         //basic set and get
         for (int n = 0; n < 8; n++) {
             cpu.setDataRegister(n, (n * 2) + 1000);
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getDataRegister(n);
-            assertEquals("Check Basic", (n * 2) + 1000, val);
+            assertEquals((n * 2) + 1000, val, "Check Basic");
         }
         //check for out of bounds
         try {
@@ -84,7 +83,7 @@ public class M68000Test extends TestCase {
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getDataRegister(n);
-            assertEquals("Check Bytes", ((n * 2) + 1000 & 0xffffff00) + (n * 2), val);
+            assertEquals(((n * 2) + 1000 & 0xffffff00) + (n * 2), val, "Check Bytes");
         }
         // check words
         for (int n = 0; n < 8; n++) {
@@ -92,7 +91,7 @@ public class M68000Test extends TestCase {
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getDataRegister(n);
-            assertEquals("Check Words", ((n * 2) + 1000 & 0xffff0000) + (n * 2), val);
+            assertEquals(((n * 2) + 1000 & 0xffff0000) + (n * 2), val, "Check Words");
         }
         // check longs
         for (int n = 0; n < 8; n++) {
@@ -100,18 +99,19 @@ public class M68000Test extends TestCase {
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getDataRegister(n);
-            assertEquals("Check Longs", (n * 2), val);
+            assertEquals((n * 2), val, "Check Longs");
         }
     }
 
-    public void testAddrRegisters() {
+    @Test
+    void testAddrRegisters() {
         //basic set and get
         for (int n = 0; n < 8; n++) {
             cpu.setAddrRegister(n, (n * 2) + 1000);
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getAddrRegister(n);
-            assertEquals("Check Basic", (n * 2) + 1000, val);
+            assertEquals((n * 2) + 1000, val, "Check Basic");
         }
         //check for out of bounds
         try {
@@ -133,7 +133,7 @@ public class M68000Test extends TestCase {
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getAddrRegister(n);
-            assertEquals("Check Bytes", ((n * 2) + 1000 & 0xffffff00) + (n * 2), val);
+            assertEquals(((n * 2) + 1000 & 0xffffff00) + (n * 2), val, "Check Bytes");
         }
         // check words
         for (int n = 0; n < 8; n++) {
@@ -141,7 +141,7 @@ public class M68000Test extends TestCase {
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getAddrRegister(n);
-            assertEquals("Check Words", ((n * 2) + 1000 & 0xffff0000) + (n * 2), val);
+            assertEquals(((n * 2) + 1000 & 0xffff0000) + (n * 2), val, "Check Words");
         }
         // check longs
         for (int n = 0; n < 8; n++) {
@@ -149,11 +149,12 @@ public class M68000Test extends TestCase {
         }
         for (int n = 0; n < 8; n++) {
             int val = cpu.getAddrRegister(n);
-            assertEquals("Check Longs", (n * 2), val);
+            assertEquals((n * 2), val, "Check Longs");
         }
     }
 
-    public void testPC() {
+    @Test
+    void testPC() {
         //set up memory
         SystemModel.MEM = TestMem.create(ofKilobytes(512));
         SystemModel.CPU = new TestCpu(SystemModel.MEM);
@@ -165,28 +166,29 @@ public class M68000Test extends TestCase {
 
         cpu.setPC(100);
         int v = cpu.fetch(Size.Word);
-        assertEquals("PC Read 1", 0x1234, v);
+        assertEquals(0x1234, v, "PC Read 1");
         v = cpu.fetch(Size.Word);
-        assertEquals("PC Read 2", 0x5678, v);
+        assertEquals(0x5678, v, "PC Read 2");
         v = cpu.fetch(Size.Word);
-        assertEquals("PC Read 3", 0x5051, v);
+        assertEquals(0x5051, v, "PC Read 3");
 
-        assertEquals("PC increments", 106, cpu.getPC());
+        assertEquals(106, cpu.getPC(), "PC increments");
 
         cpu.setPC(100);
         v = cpu.fetch(Size.Long);
-        assertEquals("PC Read 4", 0x12345678, v);
-        assertEquals("PC increment long", 104, cpu.getPC());
+        assertEquals(0x12345678, v, "PC Read 4");
+        assertEquals(104, cpu.getPC(), "PC increment long");
 
         SystemModel.MEM = null;
     }
 
-    public void testGetInstruction() {
+    @Test
+    void testGetInstruction() {
         Instruction i = cpu.getInstructionFor(0);
-        assertEquals("ORI Test", "m68k.cpu.instructions.ORI$1", i.getClass().getName());
+        assertEquals("m68k.cpu.instructions.ORI$1", i.getClass().getName(), "ORI Test");
         i = cpu.getInstructionFor(0xa);
-        assertNotNull("Null test", i);
-        assertEquals("UNKNOWN Test", "m68k.cpu.instructions.UNKNOWN", i.getClass().getName());
+        assertNotNull(i, "Null test");
+        assertEquals("m68k.cpu.instructions.UNKNOWN", i.getClass().getName(), "UNKNOWN Test");
         //	System.out.println(i.getClass().getName());
     }
 }

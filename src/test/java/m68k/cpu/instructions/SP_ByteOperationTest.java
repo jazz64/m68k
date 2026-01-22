@@ -1,25 +1,28 @@
 package m68k.cpu.instructions;
 
-import junit.framework.TestCase;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static m68k.common.DataSize.ofKilobytes;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Federico Berti
  * <p>
  * Copyright 2021
  */
-public class SP_ByteOperationTest extends TestCase {
+class SP_ByteOperationTest {
 
     AddressSpace bus;
     Cpu cpu;
     int stack = 0x200;
 
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         bus = new MemorySpace(ofKilobytes(1));
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
@@ -27,7 +30,8 @@ public class SP_ByteOperationTest extends TestCase {
         cpu.setAddrRegisterLong(7, stack);
     }
 
-    public void testSpBytePostInc() {
+    @Test
+    void testSpBytePostInc() {
         int opcode = 0xbf08; //cmpm.b  (A0)+, (A7)+
         cpu.writeMemoryWord(0, opcode);
         cpu.setAddrRegisterLong(7, stack);
@@ -39,7 +43,8 @@ public class SP_ByteOperationTest extends TestCase {
         assertEquals(spExp, cpu.getAddrRegisterLong(7));
     }
 
-    public void testSpBytePreDec() {
+    @Test
+    void testSpBytePreDec() {
         int opcode = 0xdf08; //addx.b  -(A0), -(A7)
         cpu.writeMemoryWord(0, opcode);
         cpu.setAddrRegisterLong(7, stack);

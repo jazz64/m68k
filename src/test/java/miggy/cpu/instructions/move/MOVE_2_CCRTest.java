@@ -4,26 +4,25 @@ import m68k.cpu.Cpu;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
+import org.junit.jupiter.api.Test;
 
-// $Revision: 21 $
-public class MOVE_2_CCRTest extends BasicSetup {
-    public MOVE_2_CCRTest(String test) {
-        super(test);
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
-    public void testMove() {
+class MOVE_2_CCRTest extends BasicSetup {
+    @Test
+    void testMove() {
         setInstruction(0x44c0);    //move d0,ccr
         SystemModel.CPU.setDataRegister(0, 0x0015);
 
         SystemModel.CPU.setSR(0xff00);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check SR", 0xff15 & Cpu.SR_MASK, SystemModel.CPU.getSR());
-        assertTrue("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertTrue("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertTrue("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0xff15 & Cpu.SR_MASK, SystemModel.CPU.getSR(), "Check SR");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 }
