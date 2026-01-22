@@ -1,6 +1,5 @@
 package m68k;
 
-import m68k.common.DataSize;
 import m68k.cpu.Cpu;
 import m68k.cpu.DisassembledInstruction;
 import m68k.cpu.Instruction;
@@ -262,7 +261,7 @@ public class Monitor implements Runnable
 			{
 				int addr = parseInt(tokens[1]);
 				if(breakpoints.contains(addr))
-					breakpoints.remove(new Integer(addr));
+					breakpoints.remove(Integer.valueOf(addr));
 				else
 					breakpoints.add(addr);
 			}
