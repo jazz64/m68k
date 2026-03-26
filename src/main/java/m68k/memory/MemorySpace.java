@@ -1,5 +1,7 @@
 package m68k.memory;
 
+import m68k.common.DataSize;
+
 import java.nio.ByteBuffer;
 
 /*
@@ -28,12 +30,12 @@ import java.nio.ByteBuffer;
 */
 public class MemorySpace implements AddressSpace
 {
-	private ByteBuffer buffer;
-	private int size;
+	private final ByteBuffer buffer;
+	private final int size;
 
-	public MemorySpace(int sizeKb)
+	public MemorySpace(DataSize dataSize)
 	{
-		size = sizeKb * 1024;
+		size = dataSize.toBytes();
 		buffer = ByteBuffer.allocateDirect(size);
 	}
 

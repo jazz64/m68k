@@ -10,6 +10,8 @@ import m68k.memory.MemorySpace;
 import java.io.*;
 import java.util.ArrayList;
 
+import static m68k.common.DataSize.ofKilobytes;
+
 /*
 //  M68k - Java Amiga MachineCore
 //  Copyright (c) 2008-2010, Tony Headford
@@ -77,9 +79,9 @@ public class Monitor implements Runnable
 			}
 		}
 
-		System.out.println("m68k Monitor v0.1 - Copyright 2008-2010 Tony Headford");
+        System.out.println("m68k Monitor v0.1 - Copyright 2008-2010 Tony Headford");
 
-		AddressSpace memory = new MemorySpace(mem_size);
+		AddressSpace memory = new MemorySpace(ofKilobytes(mem_size));
 		Cpu cpu = new MC68000();
 		cpu.setAddressSpace(memory);
 		cpu.reset();	//init cpu
@@ -259,7 +261,7 @@ public class Monitor implements Runnable
 			{
 				int addr = parseInt(tokens[1]);
 				if(breakpoints.contains(addr))
-					breakpoints.remove(new Integer(addr));
+					breakpoints.remove(Integer.valueOf(addr));
 				else
 					breakpoints.add(addr);
 			}

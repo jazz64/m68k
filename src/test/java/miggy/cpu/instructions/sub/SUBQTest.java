@@ -3,58 +3,59 @@ package miggy.cpu.instructions.sub;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
+import org.junit.jupiter.api.Test;
 
-// $Revision: 21 $
-public class SUBQTest extends BasicSetup {
-    public SUBQTest(String test) {
-        super(test);
-    }
+import static org.junit.jupiter.api.Assertions.*;
 
-    public void testByte() {
+class SUBQTest extends BasicSetup {
+    @Test
+    void testByte() {
         setInstruction(0x5100);    //subq.b #8, d0
         SystemModel.CPU.setDataRegister(0, 0x12345678);
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check result", 0x12345670, SystemModel.CPU.getDataRegister(0));
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0x12345670, SystemModel.CPU.getDataRegister(0), "Check result");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 
-    public void testWord() {
+    @Test
+    void testWord() {
         setInstruction(0x5f40);    //subq.w #7, d0
         SystemModel.CPU.setDataRegister(0, 0x12340002);
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check result", 0x1234fffb, SystemModel.CPU.getDataRegister(0));
-        assertTrue("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertTrue("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertTrue("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0x1234fffb, SystemModel.CPU.getDataRegister(0), "Check result");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 
-    public void testLong() {
+    @Test
+    void testLong() {
         setInstruction(0x5d80);    //subq.l #6, d0
         SystemModel.CPU.setDataRegister(0, 0x80000003);
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check result", 0x7ffffffd, SystemModel.CPU.getDataRegister(0));
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertTrue("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0x7ffffffd, SystemModel.CPU.getDataRegister(0), "Check result");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertTrue(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 }

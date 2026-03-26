@@ -4,14 +4,15 @@ import m68k.cpu.Size;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 // $Revision: 21 $
-public class MOVEPTest extends BasicSetup {
-    public MOVEPTest(String test) {
-        super(test);
-    }
-
-    public void testWordToMem() {
+class MOVEPTest extends BasicSetup {
+    @Test
+    void testWordToMem() {
         setInstructionParamW(0x0188, 0x0000);    //movep.w d0,(a0)
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         SystemModel.CPU.setAddrRegister(0, codebase + 100);
@@ -20,18 +21,19 @@ public class MOVEPTest extends BasicSetup {
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
         int val = SystemModel.MEM.peek(codebase + 100, Size.Long);
-        assertEquals("Check result", 0x43ff21ff, val);
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0x43ff21ff, val, "Check result");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 
-    public void testWordToReg() {
+    @Test
+    void testWordToReg() {
         setInstructionParamW(0x0308, 0x0000);    //movep.w (a0),d1
         SystemModel.CPU.setAddrRegister(0, codebase + 100);
         SystemModel.CPU.setDataRegister(1, 0xc0c0c0c0);
@@ -40,17 +42,18 @@ public class MOVEPTest extends BasicSetup {
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check result", 0xc0c04321, SystemModel.CPU.getDataRegister(1));
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0xc0c04321, SystemModel.CPU.getDataRegister(1), "Check result");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 
-    public void testLongToMem() {
+    @Test
+    void testLongToMem() {
         setInstructionParamW(0x01c8, 0x0000);    //movep.l d0,(a0)
         SystemModel.CPU.setDataRegister(0, 0x87654321);
         //odd address
@@ -60,20 +63,21 @@ public class MOVEPTest extends BasicSetup {
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
         int val = SystemModel.MEM.peek(codebase + 100, Size.Long);
-        assertEquals("Check result 1", 0xff87ff65, val);
+        assertEquals(0xff87ff65, val, "Check result 1");
         val = SystemModel.MEM.peek(codebase + 104, Size.Long);
-        assertEquals("Check result 2", 0xff43ff21, val);
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0xff43ff21, val, "Check result 2");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 
-    public void testLongToReg() {
+    @Test
+    void testLongToReg() {
         setInstructionParamW(0x0348, 0x0000);    //movep.l (a0),d1
         //odd address
         SystemModel.CPU.setAddrRegister(0, codebase + 101);
@@ -83,14 +87,13 @@ public class MOVEPTest extends BasicSetup {
 
         SystemModel.CPU.setCCR((byte) 0);
 
-        int time = SystemModel.CPU.execute();
+        SystemModel.CPU.execute();
 
-        assertEquals("Check result", 0x87654321, SystemModel.CPU.getDataRegister(1));
-        assertFalse("Check X", SystemModel.CPU.isSet(CpuFlag.X));
-        assertFalse("Check N", SystemModel.CPU.isSet(CpuFlag.N));
-        assertFalse("Check Z", SystemModel.CPU.isSet(CpuFlag.Z));
-        assertFalse("Check V", SystemModel.CPU.isSet(CpuFlag.V));
-        assertFalse("Check C", SystemModel.CPU.isSet(CpuFlag.C));
+        assertEquals(0x87654321, SystemModel.CPU.getDataRegister(1), "Check result");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.N), "Check N");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
+        assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
     }
 }
-

@@ -1,8 +1,12 @@
 package m68k.cpu;
 
-import junit.framework.TestCase;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static m68k.common.DataSize.ofKilobytes;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -28,18 +32,20 @@ import m68k.memory.MemorySpace;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class MC68000Test extends TestCase {
+class MC68000Test {
     AddressSpace bus;
     Cpu cpu;
 
-    public void setUp() {
-        bus = new MemorySpace(1);    //create 1kb of memory for the cpu
+    @BeforeEach
+    void setUp() {
+        bus = new MemorySpace(ofKilobytes(1));
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
         cpu.reset();
     }
 
-    public void testDataRegs() {
+    @Test
+    void testDataRegs() {
         for (int r = 0; r < 7; r++) {
             cpu.setDataRegisterByte(r, 0xaa);
             assertEquals(0xaa, cpu.getDataRegisterByte(r));
@@ -71,7 +77,8 @@ public class MC68000Test extends TestCase {
         }
     }
 
-    public void testAddrRegs() {
+    @Test
+    void testAddrRegs() {
         for (int r = 0; r < 7; r++) {
             cpu.setAddrRegisterByte(r, 0xaa);
             assertEquals(0xaa, cpu.getAddrRegisterByte(r));
@@ -103,7 +110,8 @@ public class MC68000Test extends TestCase {
         }
     }
 
-    public void testPC() {
+    @Test
+    void testPC() {
         bus.writeLong(4, 0x12345678);
         cpu.setPC(4);
         int val = cpu.fetchPCLong();
@@ -128,7 +136,8 @@ public class MC68000Test extends TestCase {
         assertEquals(8, cpu.getPC());
     }
 
-    public void testFlags() {
+    @Test
+    void testFlags() {
         cpu.setSR(0x27ff);
         assertTrue(cpu.isFlagSet(Cpu.C_FLAG));
         assertTrue(cpu.isFlagSet(Cpu.V_FLAG));
@@ -193,7 +202,8 @@ public class MC68000Test extends TestCase {
         assertEquals(0, cpu.getInterruptLevel());
     }
 
-    public void testException() {
+    @Test
+    void testException() {
         bus.writeLong(0x08, 0x56789);
         bus.writeLong(0x0c, 0x12345);
         bus.writeLong(0x10, 0x23456);
@@ -202,10 +212,11 @@ public class MC68000Test extends TestCase {
         cpu.setAddrRegisterLong(7, 0x0100);
         cpu.setSSP(0x0200);
         cpu.raiseException(2);
-        assertEquals("pc", 0x56789, cpu.getPC());
-        assertEquals("a7", 0x01fa, cpu.getAddrRegisterLong(7)); // 0x0200 - push pc + push sr (6 bytes)
-        assertEquals("usp", 0x0100, cpu.getUSP());
-        assertTrue("supervisor", cpu.isSupervisorMode());
+        assertEquals(0x56789, cpu.getPC(), "pc");
+        // 0x0200 - push pc + push sr (6 bytes)
+        assertEquals(0x01fa, cpu.getAddrRegisterLong(7), "a7");
+        assertEquals(0x0100, cpu.getUSP(), "usp");
+        assertTrue(cpu.isSupervisorMode(), "supervisor");
         int sr = cpu.popWord();
         int pc = cpu.popLong();
         assertEquals(0x04, sr);

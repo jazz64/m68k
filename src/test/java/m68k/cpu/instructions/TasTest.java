@@ -1,11 +1,14 @@
 package m68k.cpu.instructions;
 
-import org.junit.Assert;
-import junit.framework.TestCase;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static m68k.common.DataSize.ofKilobytes;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * ${FILE}
@@ -14,15 +17,14 @@ import m68k.memory.MemorySpace;
  * <p>
  * Copyright 2019
  */
-public class TasTest extends TestCase {
+class TasTest {
 
     AddressSpace bus;
     Cpu cpu;
 
-
-    public void setUp() {
-        //create 1kb of memory for the cpu
-        bus = new MemorySpace(1);
+    @BeforeEach
+    void setUp() {
+        bus = new MemorySpace(ofKilobytes(1));
 
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
@@ -30,9 +32,9 @@ public class TasTest extends TestCase {
         cpu.setAddrRegisterLong(7, 0x200);
     }
 
-
     // 0100 1010 1100 0000
-    public void testTasRegOk() {
+    @Test
+    void testTasRegOk() {
         TAS.EMULATE_BROKEN_TAS = false;
         bus.writeWord(4, 0x4AC0);    //TAS D0
         cpu.setPC(4);
@@ -40,10 +42,11 @@ public class TasTest extends TestCase {
 
         cpu.execute();
         int res = cpu.getDataRegisterLong(0);
-        Assert.assertEquals(1, (res & 0xFF) >> 7);
+        assertEquals(1, (res & 0xFF) >> 7);
     }
 
-    public void testTasRegBroken() {
+    @Test
+    void testTasRegBroken() {
         TAS.EMULATE_BROKEN_TAS = true;
         bus.writeWord(4, 0x4AC0);    //TAS D0
         cpu.setPC(4);
@@ -51,10 +54,11 @@ public class TasTest extends TestCase {
 
         cpu.execute();
         int res = cpu.getDataRegisterLong(0);
-        Assert.assertEquals(1, (res & 0xFF) >> 7);
+        assertEquals(1, (res & 0xFF) >> 7);
     }
 
-    public void testTasMemOk() {
+    @Test
+    void testTasMemOk() {
         TAS.EMULATE_BROKEN_TAS = false;
         int val = 0x20;
         int memAddr = 100;
@@ -65,11 +69,12 @@ public class TasTest extends TestCase {
 
         cpu.execute();
         int res = bus.readByte(memAddr);
-        Assert.assertEquals(1, (res & 0xFF) >> 7);
-        Assert.assertEquals(val | 0x80, res);
+        assertEquals(1, (res & 0xFF) >> 7);
+        assertEquals(val | 0x80, res);
     }
 
-    public void testTasMemBroken() {
+    @Test
+    void testTasMemBroken() {
         TAS.EMULATE_BROKEN_TAS = true;
         bus.writeWord(4, 0x4AD0);    //TAS (A0)
         bus.writeByte(100, 0x20);
@@ -78,7 +83,7 @@ public class TasTest extends TestCase {
 
         cpu.execute();
         int res = bus.readByte(100);
-        Assert.assertEquals(0, (res & 0xFF) >> 7);
-        Assert.assertEquals(0x20, res);
+        assertEquals(0, (res & 0xFF) >> 7);
+        assertEquals(0x20, res);
     }
 }

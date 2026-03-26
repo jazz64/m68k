@@ -1,10 +1,14 @@
 package m68k.cpu.instructions;
 
-import junit.framework.TestCase;
 import m68k.cpu.Cpu;
 import m68k.cpu.MC68000;
 import m68k.memory.AddressSpace;
 import m68k.memory.MemorySpace;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static m68k.common.DataSize.ofKilobytes;
+import static org.junit.jupiter.api.Assertions.*;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -30,19 +34,21 @@ import m68k.memory.MemorySpace;
 //  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 */
-public class ADDTest extends TestCase {
+class ADDTest {
     AddressSpace bus;
     Cpu cpu;
 
-    public void setUp() {
-        bus = new MemorySpace(1);    //create 1kb of memory for the cpu
+    @BeforeEach
+    void setUp() {
+        bus = new MemorySpace(ofKilobytes(1));
         cpu = new MC68000();
         cpu.setAddressSpace(bus);
         cpu.reset();
         cpu.setAddrRegisterLong(7, 0x200);
     }
 
-    public void testADD() {
+    @Test
+    void testADD() {
         cpu.setPC(4);
         cpu.setDataRegisterByte(0, 0x40);
         cpu.setDataRegisterByte(1, 0x80);
@@ -64,14 +70,14 @@ public class ADDTest extends TestCase {
         bus.writeWord(4, 0xd041);    // add.w d1,d0
         ticks = cpu.execute();
         assertEquals(6, cpu.getPC());
-        assertEquals("d0", 0x0500, cpu.getDataRegisterWord(0));
-        assertEquals("d1", 0x8500, cpu.getDataRegisterWord(1));
+        assertEquals(0x0500, cpu.getDataRegisterWord(0), "d0");
+        assertEquals(0x8500, cpu.getDataRegisterWord(1), "d1");
         assertEquals(4, ticks);
-        assertTrue("c-flag", cpu.isFlagSet(Cpu.C_FLAG));
-        assertTrue("v-flag", cpu.isFlagSet(Cpu.V_FLAG));
-        assertFalse("z-flag", cpu.isFlagSet(Cpu.Z_FLAG));
-        assertFalse("n-flag", cpu.isFlagSet(Cpu.N_FLAG));
-        assertTrue("x-flag", cpu.isFlagSet(Cpu.X_FLAG));
+        assertTrue(cpu.isFlagSet(Cpu.C_FLAG), "c-flag");
+        assertTrue(cpu.isFlagSet(Cpu.V_FLAG), "v-flag");
+        assertFalse(cpu.isFlagSet(Cpu.Z_FLAG), "z-flag");
+        assertFalse(cpu.isFlagSet(Cpu.N_FLAG), "n-flag");
+        assertTrue(cpu.isFlagSet(Cpu.X_FLAG), "x-flag");
 
 
         cpu.setPC(4);
@@ -80,13 +86,13 @@ public class ADDTest extends TestCase {
         bus.writeWord(4, 0xd081);    // add.l d1,d0
         ticks = cpu.execute();
         assertEquals(6, cpu.getPC());
-        assertEquals("d0", 0, cpu.getDataRegisterLong(0));
-        assertEquals("d1", 0x04, cpu.getDataRegisterWord(1));
+        assertEquals(0, cpu.getDataRegisterLong(0), "d0");
+        assertEquals(0x04, cpu.getDataRegisterWord(1), "d1");
         assertEquals(6, ticks);
-        assertTrue("c-flag", cpu.isFlagSet(Cpu.C_FLAG));
-        assertFalse("v-flag", cpu.isFlagSet(Cpu.V_FLAG));
-        assertTrue("z-flag", cpu.isFlagSet(Cpu.Z_FLAG));
-        assertFalse("n-flag", cpu.isFlagSet(Cpu.N_FLAG));
-        assertTrue("x-flag", cpu.isFlagSet(Cpu.X_FLAG));
+        assertTrue(cpu.isFlagSet(Cpu.C_FLAG), "c-flag");
+        assertFalse(cpu.isFlagSet(Cpu.V_FLAG), "v-flag");
+        assertTrue(cpu.isFlagSet(Cpu.Z_FLAG), "z-flag");
+        assertFalse(cpu.isFlagSet(Cpu.N_FLAG), "n-flag");
+        assertTrue(cpu.isFlagSet(Cpu.X_FLAG), "x-flag");
     }
 }

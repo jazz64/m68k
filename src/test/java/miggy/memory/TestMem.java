@@ -1,5 +1,6 @@
 package miggy.memory;
 
+import m68k.common.DataSize;
 import m68k.cpu.Size;
 import m68k.memory.MemorySpace;
 
@@ -30,14 +31,12 @@ import m68k.memory.MemorySpace;
 */
 public class TestMem extends MemorySpace {
 
-    public TestMem(int size) {
+    private TestMem(DataSize size) {
         super(size);
     }
 
-    public static TestMem create(int size) {
-
-        TestMem tm = new TestMem(size);
-        return tm;
+    public static TestMem create(DataSize size) {
+        return new TestMem(size);
     }
 
     public void reset() {

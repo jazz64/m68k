@@ -1,10 +1,12 @@
 package m68k.cpu.instructions;
 
-import org.junit.Assert;
 import miggy.BasicSetup;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static miggy.SystemModel.CPU;
 import static miggy.SystemModel.CpuFlag;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * ${FILE}
@@ -15,15 +17,11 @@ import static miggy.SystemModel.CpuFlag;
  * <p>
  * Copyright 2019
  */
-public class BitShiftTest extends BasicSetup {
+class BitShiftTest extends BasicSetup {
 
-    private int destReg = 0;
-    private int srcReg = 1;
-    private int shiftOrRotateValue = 0;
-
-    public BitShiftTest(String test) {
-        super(test);
-    }
+    private final int destReg = 0;
+    private final int srcReg = 1;
+    private final int shiftOrRotateValue = 0;
 
     /**
      * Shift count of zero:
@@ -32,14 +30,16 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - cleared
      */
-    public void testLsl() {
+    @Test
+    void testLsl() {
         int opcode = 0xE328; //lsl.b d1,d0
         int d0 = 0x07654321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0);
     }
 
-    public void testLsr() {
+    @Test
+    void testLsr() {
         int opcode = 0xE228; //lsr.b d1,d0
         int d0 = 0x07654321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
@@ -53,14 +53,16 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - cleared
      */
-    public void testAsl() {
+    @Test
+    void testAsl() {
         int opcode = 0xE320; //asl.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0);
     }
 
-    public void testAsr() {
+    @Test
+    void testAsr() {
         int opcode = 0xE220; //asr.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
@@ -74,14 +76,16 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - cleared
      */
-    public void testRol() {
+    @Test
+    void testRol() {
         int opcode = 0xE338; //rol.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0);
     }
 
-    public void testRor() {
+    @Test
+    void testRor() {
         int opcode = 0xE238; //ror.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0);
@@ -95,14 +99,16 @@ public class BitShiftTest extends BasicSetup {
      * V - cleared
      * C - set to the value of the extend bit
      */
-    public void testRoxl() {
+    @Test
+    void testRoxl() {
         int opcode = 0xE330; //roxl.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0, true);
         testInstInternal(opcode, CpuFlag.C | CpuFlag.V, d0, true);
     }
 
-    public void testRoxr() {
+    @Test
+    void testRoxr() {
         int opcode = 0xE230; //roxr.b d1,d0
         int d0 = 0x4321;
         testInstInternal(opcode, CpuFlag.C | CpuFlag.X | CpuFlag.V, d0, true);
@@ -128,32 +134,30 @@ public class BitShiftTest extends BasicSetup {
         CPU.setFlags(flagState);
 
         CPU.execute();
-        assertEquals("Check result", d0, CPU.getDataRegister(destReg));
+        Assertions.assertEquals(d0, CPU.getDataRegister(destReg), "Check result");
         assertFlagStates(flagState, isRox);
     }
 
     private static void assertFlagStates(int beforeState, boolean isRox) {
         switch (beforeState) {
             case CpuFlag.C | CpuFlag.X | CpuFlag.V:
-                assertTrue("Check X", CPU.isSet(CpuFlag.X));
+                assertTrue(CPU.isSet(CpuFlag.X), "Check X");
                 break;
             case CpuFlag.C | CpuFlag.V:
-                assertFalse("Check X", CPU.isSet(CpuFlag.X));
+                assertFalse(CPU.isSet(CpuFlag.X), "Check X");
                 break;
             default:
-                Assert.fail("Unknown flag combination: " + beforeState);
+                fail("Unknown flag combination: " + beforeState);
                 break;
         }
-        assertFalse("Check V", CPU.isSet(CpuFlag.V));
+        assertFalse(CPU.isSet(CpuFlag.V), "Check V");
         if (isRox) {
-            assertEquals("Check C", CPU.isSet(CpuFlag.X),
-                    CPU.isSet(CpuFlag.C));
+            boolean expected = CPU.isSet(CpuFlag.X);
+            Assertions.assertEquals(expected, CPU.isSet(CpuFlag.C), "Check C");
         } else {
-            assertFalse("Check C", CPU.isSet(CpuFlag.C));
+            assertFalse(CPU.isSet(CpuFlag.C), "Check C");
         }
-        assertFalse("Check Z", CPU.isSet(CpuFlag.Z));
-        assertFalse("Check N", CPU.isSet(CpuFlag.N));
+        assertFalse(CPU.isSet(CpuFlag.Z), "Check Z");
+        assertFalse(CPU.isSet(CpuFlag.N), "Check N");
     }
-
-
 }
