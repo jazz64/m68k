@@ -49,7 +49,7 @@ public class EORI_TO_CCR implements InstructionHandler
             }
             public DisassembledInstruction disassemble(int address, int opcode)
             {
-                return disassembleOp(address, opcode, Size.Word);
+                return disassembleOp(address, opcode, Size.Byte);
             }
         };
         is.addInstruction(base, i);
@@ -72,11 +72,11 @@ public class EORI_TO_CCR implements InstructionHandler
 		int imm;
 		String is;
 		imm = cpu.readMemoryWord(address + 2);
-        is = String.format("#$%04x", imm);
+        is = String.format("#$%02x", imm);
         imm_bytes = 2;
 
 		DisassembledOperand src = new DisassembledOperand(is, imm_bytes, imm);
-		DisassembledOperand dst = cpu.disassembleDstEA(address + 2 + imm_bytes, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
-		return new DisassembledInstruction(address, opcode, "ori" + sz.ext(), src, dst);
+        DisassembledOperand dst = new DisassembledOperand("ccr");
+        return new DisassembledInstruction(address, opcode, "eori" + sz.ext(), src, dst);
 	}
 }
