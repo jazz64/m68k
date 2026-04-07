@@ -74,8 +74,8 @@ public class EORI_TO_SR implements InstructionHandler
         is = String.format("#$%04x", imm);
         imm_bytes = 2;
 		DisassembledOperand src = new DisassembledOperand(is, imm_bytes, imm);
-		DisassembledOperand dst = cpu.disassembleDstEA(address + 2 + imm_bytes, (opcode >> 3) & 0x07, (opcode & 0x07), sz);
+        DisassembledOperand dst = new DisassembledOperand("sr");
 
-		return new DisassembledInstruction(address, opcode, "EORI" + sz.ext(), src, dst);
+        return new DisassembledInstruction(address, opcode, "eori" + sz.ext(), src, dst);
 	}
 }
