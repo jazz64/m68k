@@ -12,7 +12,7 @@ class EORI_TO_CCRTest extends BasicSetup {
     @Test
     void disassemble_returnsCorrectDisassembledInstruction() {
         int opcode = 0xA3C;
-        setInstructionParamW(opcode, 0x0067); // eori.b   #$67,ccr
+        setInstructionParamW(opcode, 0x4567); // eori.b #$67,ccr (high byte [$45] to be ignored for disassembly)
         Instruction instruction = SystemModel.CPU.getInstructionAt(codebase);
 
         DisassembledInstruction result = instruction.disassemble(codebase, opcode);
@@ -21,5 +21,4 @@ class EORI_TO_CCRTest extends BasicSetup {
         assertEquals("#$67", result.op1.operand);
         assertEquals("ccr", result.op2.operand);
     }
-
 }
