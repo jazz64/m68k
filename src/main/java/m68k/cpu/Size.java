@@ -26,14 +26,14 @@ package m68k.cpu;
 */
 public enum Size
 {
-	Byte(1, ".b", 0x80), Word(2, ".w", 0x8000), Long(4, ".l", 0x80000000), Unsized(0, "", 0);
+	Byte(1, ".b", 0x80), Word(2, ".w", 0x8000), Long(4, ".l", 0x80000000);
 
 	private final int byte_count;
 	private final String ext;
 	private final int msb;
 	private final int mask;
 
-	private Size(int num_bytes, String ext, int msb)
+	Size(int num_bytes, String ext, int msb)
 	{
 		byte_count = num_bytes;
 		this.ext = ext;
