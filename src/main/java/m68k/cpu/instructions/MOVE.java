@@ -1,6 +1,11 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.rules.AddressingMode;
+
+import static m68k.cpu.rules.AddressingMode.allModes;
+import static m68k.cpu.rules.AddressingMode.dataAlterableModes;
+import static m68k.cpu.rules.ByteOperationsOnAddressesForbidden.filtered;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -69,73 +74,52 @@ public class MOVE implements InstructionHandler
 		Instruction i;
 
 		// destination ea
-		for(int sz = 0; sz < 3; sz++)
+		for (Size sz : Size.values())
 		{
-			if(sz == 0)
-			{
-				// move byte
-				base = 0x1000;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return move_byte(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Byte);
-					}
-				};
-			}
-			else if(sz == 1)
-			{
-				// move word
-				base = 0x3000;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return move_word(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Word);
-					}
-				};
-			}
-			else
-			{
-				// move long
-				base = 0x2000;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return move_long(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Long);
-					}
-				};
-			}
-			for(int sea_mode = 0; sea_mode < 8; sea_mode++)
-			{
-				for(int sea_reg = 0; sea_reg < 8; sea_reg++)
-				{
-					if(sea_mode == 7 && sea_reg > 4)
-						break;
-
-					for(int dea_mode = 0; dea_mode < 8; dea_mode++)
-					{
-						if(dea_mode == 1)
-							continue;
-
-						for(int dea_reg = 0; dea_reg < 8; dea_reg++)
-						{
-							if(dea_mode == 7 && dea_reg > 1)
-								break;
-
-							is.addInstruction(base + (dea_reg << 9) + (dea_mode << 6) + (sea_mode << 3) + sea_reg, i);
+			switch (sz) {
+				case Byte -> {
+					// move byte
+					base = 0x1000;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return move_byte(opcode);
 						}
-					}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+				case Word -> {
+					// move word
+					base = 0x3000;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return move_word(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+				default -> {
+					// move long
+					base = 0x2000;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return move_long(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+			}
+			for (AddressingMode sea : filtered(allModes(), sz)) {
+				for (AddressingMode dea : dataAlterableModes()) {
+					is.addInstruction(base + (dea.getRegister() << 9) + (dea.getMode() << 6) + (sea.getMode() << 3) + sea.getRegister(), i);
 				}
 			}
 		}

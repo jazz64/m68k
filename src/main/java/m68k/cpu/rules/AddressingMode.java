@@ -31,7 +31,7 @@ public abstract sealed class AddressingMode {
         }
     }
 
-    static final class AddressRegisterDirect extends AddressingMode {
+    public static final class AddressRegisterDirect extends AddressingMode {
         public final int number;
 
         AddressRegisterDirect(int number) {
