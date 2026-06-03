@@ -8,17 +8,17 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class EORI_TO_CCRTest extends BasicSetup {
+class ORI_TO_CCRTest extends BasicSetup {
     @Test
     void disassemble_returnsCorrectDisassembledInstruction() {
-        int opcode = 0xA3C;
-        setInstructionParamW(opcode, 0x4567); // eori.b #$67,ccr (high byte [$45] to be ignored for disassembly)
+        int opcode = 0x03C;
+        setInstructionParamW(opcode, 0x2345); // ori.b #$45,ccr (high byte [$23] to be ignored for disassembly)
         Instruction instruction = SystemModel.CPU.getInstructionAt(codebase);
 
         DisassembledInstruction result = instruction.disassemble(codebase, opcode);
 
-        assertEquals("eori.b", result.instruction);
-        assertEquals("#$67", result.op1.operand);
+        assertEquals("ori.b", result.instruction);
+        assertEquals("#$45", result.op1.operand);
         assertEquals("ccr", result.op2.operand);
     }
 }

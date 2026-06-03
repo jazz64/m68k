@@ -68,12 +68,9 @@ public class EORI_TO_CCR implements InstructionHandler
 
 	protected final DisassembledInstruction disassembleOp(int address, int opcode, Size sz)
 	{
-        int imm_bytes;
-		int imm;
-		String is;
-		imm = cpu.readMemoryWord(address + 2);
-        is = String.format("#$%02x", imm);
-        imm_bytes = 2;
+        final int imm = cpu.readMemoryWord(address + 2);
+        final String is = String.format("#$%02x", imm & 0x00FF);
+        final int imm_bytes = 2;
 
 		DisassembledOperand src = new DisassembledOperand(is, imm_bytes, imm);
         DisassembledOperand dst = new DisassembledOperand("ccr");
