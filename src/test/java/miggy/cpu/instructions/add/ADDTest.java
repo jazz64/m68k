@@ -1,10 +1,18 @@
 package miggy.cpu.instructions.add;
 
+import m68k.cpu.InstructionHandler;
+import m68k.cpu.Size;
+import m68k.cpu.TestRegistry;
+import m68k.cpu.instructions.ADD;
+import m68k.cpu.rules.AddressingMode;
+import m68k.cpu.rules.AddressingMode.AddressRegisterDirect;
+import m68k.cpu.rules.AddressingMode.DataRegisterDirect;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
 import org.junit.jupiter.api.Test;
 
+import static m68k.cpu.rules.AddressingMode.alterableMemoryModes;
 import static org.junit.jupiter.api.Assertions.*;
 
 // $Revision: 21 $
@@ -58,5 +66,22 @@ class ADDTest extends BasicSetup {
         assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
         assertTrue(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
         assertTrue(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+    }
+
+    @Test
+    void register_onCommonInstance_registersCorrectNumberOfVariants() {
+        TestRegistry registry = new TestRegistry();
+        InstructionHandler instance = new ADD(SystemModel.CPU);
+        int registerModes = DataRegisterDirect.all().size();
+        int eaSourceModes = AddressingMode.allModes().size();
+        int eaDestinationModes = alterableMemoryModes().size();
+        int sizes = Size.values().length;
+        int forbidden = AddressRegisterDirect.all().size() * registerModes;
+        int variantsToRegister = (eaSourceModes * registerModes * sizes) - forbidden;
+        int variantsFromRegister = eaDestinationModes * registerModes * sizes;
+
+        instance.register(registry);
+
+        assertEquals(variantsFromRegister + variantsToRegister, registry.size());
     }
 }
