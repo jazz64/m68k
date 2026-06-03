@@ -186,11 +186,11 @@ public class MOVEP implements InstructionHandler
 		if(r2m)
 		{
 			src = new DisassembledOperand("d" + ((opcode >> 9) & 0x07));
-			dst = new DisassembledOperand(String.format("#$%04x(a%d)", dis, (opcode & 0x07)), 2, dis);
+			dst = new DisassembledOperand(String.format("$%04x(a%d)", dis, (opcode & 0x07)), 2, dis);
 		}
 		else
 		{
-			src = new DisassembledOperand(String.format("#$%04x(a%d)", dis, (opcode & 0x07)), 2, dis);
+			src = new DisassembledOperand(String.format("$%04x(a%d)", dis, (opcode & 0x07)), 2, dis);
 			dst = new DisassembledOperand("d" + ((opcode >> 9) & 0x07));
 		}
 		return new DisassembledInstruction(address, opcode, "movep" + sz.ext(), src, dst);

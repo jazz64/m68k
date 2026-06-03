@@ -1,5 +1,7 @@
 package miggy.cpu.instructions.move;
 
+import m68k.cpu.DisassembledInstruction;
+import m68k.cpu.Instruction;
 import m68k.cpu.Size;
 import miggy.BasicSetup;
 import miggy.SystemModel;
@@ -95,5 +97,31 @@ class MOVEPTest extends BasicSetup {
         assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
         assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
         assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
+    }
+
+    @Test
+    void disassemble_wordToRegister_returnsCorrectDisassembledInstruction() {
+        int opcode = 0x108;
+        setInstructionParamW(opcode, 0x4523); // movep.w $4523(a0),d0
+        Instruction instruction = SystemModel.CPU.getInstructionAt(codebase);
+
+        DisassembledInstruction result = instruction.disassemble(codebase, opcode);
+
+        assertEquals("movep.w", result.instruction);
+        assertEquals("$4523(a0)", result.op1.operand);
+        assertEquals("d0", result.op2.operand);
+    }
+
+    @Test
+    void disassemble_longToMemory_returnsCorrectDisassembledInstruction() {
+        int opcode = 0x1C8;
+        setInstructionParamW(opcode, 0x4523); // movep.l d0,$4523(a0)
+        Instruction instruction = SystemModel.CPU.getInstructionAt(codebase);
+
+        DisassembledInstruction result = instruction.disassemble(codebase, opcode);
+
+        assertEquals("movep.l", result.instruction);
+        assertEquals("d0", result.op1.operand);
+        assertEquals("$4523(a0)", result.op2.operand);
     }
 }
