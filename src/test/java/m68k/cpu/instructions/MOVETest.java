@@ -45,10 +45,11 @@ class MOVETest {
 
     @Test
     void testMoveByte() {
-        bus.writeWord(0, 0x1108); //move.b	a0,-(a0)
+        bus.writeWord(0, 0x1100); //move.b	d0,-(a0)
         cpu.setAddrRegisterLong(0, stack);
+        cpu.setDataRegisterLong(0, 0x1234);
         cpu.execute();
-        assertEquals(stack & 0xFF, cpu.readMemoryByte(stack - 1), "Check for a0");
+        assertEquals(0x34, cpu.readMemoryByte(stack - 1), "Check for d0");
     }
 
     @Test

@@ -1,11 +1,17 @@
 package miggy.cpu.instructions.move;
 
+import m68k.cpu.InstructionHandler;
 import m68k.cpu.Size;
+import m68k.cpu.TestRegistry;
+import m68k.cpu.instructions.MOVE;
+import m68k.cpu.rules.AddressingMode;
+import m68k.cpu.rules.AddressingMode.AddressRegisterDirect;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
 import org.junit.jupiter.api.Test;
 
+import static m68k.cpu.rules.AddressingMode.dataAlterableModes;
 import static org.junit.jupiter.api.Assertions.*;
 
 // $Revision: 21 $
@@ -84,5 +90,20 @@ class MOVETest extends BasicSetup {
         assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
         assertFalse(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
         assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
+    }
+
+    @Test
+    void register_onCommonInstance_registersCorrectNumberOfVariants() {
+        TestRegistry registry = new TestRegistry();
+        InstructionHandler instance = new MOVE(SystemModel.CPU);
+        int sourceModes = AddressingMode.allModes().size();
+        int destinationModes = dataAlterableModes().size();
+        int sizes = Size.values().length;
+        int forbidden = AddressRegisterDirect.all().size() * destinationModes;
+        int variants = sourceModes * destinationModes * sizes - forbidden;
+
+        instance.register(registry);
+
+        assertEquals(variants, registry.size());
     }
 }
