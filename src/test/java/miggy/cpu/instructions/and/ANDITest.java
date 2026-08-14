@@ -1,10 +1,15 @@
 package miggy.cpu.instructions.and;
 
+import m68k.cpu.InstructionHandler;
+import m68k.cpu.Size;
+import m68k.cpu.TestRegistry;
+import m68k.cpu.instructions.ANDI;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
 import org.junit.jupiter.api.Test;
 
+import static m68k.cpu.rules.AddressingMode.dataAlterableModes;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ANDITest extends BasicSetup {
@@ -54,5 +59,18 @@ class ANDITest extends BasicSetup {
         assertTrue(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
         assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
         assertTrue(SystemModel.CPU.isSet(CpuFlag.X), "Check X");
+    }
+
+    @Test
+    void register_onCommonInstance_registersCorrectNumberOfVariants() {
+        TestRegistry registry = new TestRegistry();
+        InstructionHandler instance = new ANDI(SystemModel.CPU);
+        int destinationModes = dataAlterableModes().size();
+        int sizes = Size.values().length;
+        int variants = destinationModes * sizes;
+
+        instance.register(registry);
+
+        assertEquals(variants, registry.size());
     }
 }

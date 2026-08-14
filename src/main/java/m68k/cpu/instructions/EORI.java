@@ -1,6 +1,9 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.rules.AddressingMode;
+
+import static m68k.cpu.rules.AddressingMode.dataAlterableModes;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -41,66 +44,58 @@ public class EORI implements InstructionHandler
 		Instruction i;
 
 		// destination ea
-		for(int sz = 0; sz < 3; sz++)
+		for (Size sz : Size.values())
 		{
-			if(sz == 0)
-			{
-				// eori byte
-				base = 0x0a00;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return eori_byte(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Byte);
-					}
-				};
-			}
-			else if(sz == 1)
-			{
-				// eori word
-				base = 0x0a40;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return eori_word(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Word);
-					}
-				};
-			}
-			else
-			{
-				// eori long
-				base = 0x0a80;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return eori_long(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Long);
-					}
-				};
-			}
+			switch (sz) {
+				case Byte -> {
+					// eori byte
+					base = 0x0a00;
+					i = new Instruction() {
+						@Override
+						public int execute(int opcode) {
+							return eori_byte(opcode);
+						}
 
-			for(int ea_mode = 0; ea_mode < 8; ea_mode++)
-			{
-				if(ea_mode == 1)
-					continue;
-
-				for(int ea_reg = 0; ea_reg < 8; ea_reg++)
-				{
-					if(ea_mode == 7 && (ea_reg == 2 || ea_reg == 3 || ea_reg == 4))
-						continue;
-
-					is.addInstruction(base + (ea_mode << 3) + ea_reg, i);
+						@Override
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
 				}
+				case Word -> {
+					// eori word
+					base = 0x0a40;
+					i = new Instruction() {
+						@Override
+						public int execute(int opcode) {
+							return eori_word(opcode);
+						}
+
+						@Override
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+				default -> {
+					// eori long
+					base = 0x0a80;
+					i = new Instruction() {
+						@Override
+						public int execute(int opcode) {
+							return eori_long(opcode);
+						}
+
+						@Override
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+			}
+
+			for (AddressingMode ea : dataAlterableModes()) {
+				is.addInstruction(base + (ea.getMode() << 3) + ea.getRegister(), i);
 			}
 		}
 	}
