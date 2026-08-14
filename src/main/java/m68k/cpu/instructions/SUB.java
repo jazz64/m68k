@@ -1,6 +1,12 @@
 package m68k.cpu.instructions;
 
 import m68k.cpu.*;
+import m68k.cpu.rules.AddressingMode;
+import m68k.cpu.rules.AddressingMode.DataRegisterDirect;
+
+import static m68k.cpu.rules.AddressingMode.allModes;
+import static m68k.cpu.rules.AddressingMode.alterableMemoryModes;
+import static m68k.cpu.rules.ByteOperationsOnAddressesForbidden.filtered;
 
 /*
 //  M68k - Java Amiga MachineCore
@@ -41,125 +47,103 @@ public class SUB implements InstructionHandler
 		Instruction i;
 
 		// destination dn
-		for(int sz = 0; sz < 3; sz++)
+		for (Size sz : Size.values())
 		{
-			if(sz == 0)
-			{
-				// sub byte (dn dest)
-				base = 0x9000;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return sub_byte_dn_dest(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Byte);
-					}
-				};
+			switch (sz) {
+				case Byte -> {
+					// sub byte (dn dest)
+					base = 0x9000;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return sub_byte_dn_dest(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+				case Word -> {
+					// sub word (dn dest)
+					base = 0x9040;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return sub_word_dn_dest(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+				default -> {
+					// sub long (dn dest)
+					base = 0x9080;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return sub_long_dn_dest(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
 			}
-			else if(sz == 1)
-			{
-				// sub word (dn dest)
-				base = 0x9040;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return sub_word_dn_dest(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Word);
-					}
-				};
-			}
-			else
-			{
-				// sub long (dn dest)
-				base = 0x9080;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return sub_long_dn_dest(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Long);
-					}
-				};
-			}
-			for(int reg = 0; reg < 8; reg++)
-			{
-				for(int ea_mode = 0; ea_mode < 8; ea_mode++)
-				{
-					for(int ea_reg = 0; ea_reg < 8; ea_reg++)
-					{
-						if(ea_mode == 7 && ea_reg > 4)
-							break;
-						is.addInstruction(base + (reg << 9) + (ea_mode << 3) + ea_reg, i);
-					}
+			for (AddressingMode ea : filtered(allModes(), sz)) {
+				for (DataRegisterDirect reg : DataRegisterDirect.all()) {
+					is.addInstruction(base + (reg.getRegister() << 9) + (ea.getMode() << 3) + ea.getRegister(), i);
 				}
 			}
 		}
 
 		// destination ea
-		for(int sz = 0; sz < 3; sz++)
+		for (Size sz : Size.values())
 		{
-			if(sz == 0)
-			{
-				// sub byte (ea dest)
-				base = 0x9100;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return sub_byte_ea_dest(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Byte);
-					}
-				};
+			switch (sz) {
+				case Byte -> {
+					// sub byte (ea dest)
+					base = 0x9100;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return sub_byte_ea_dest(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+				case Word -> {
+					// sub word (ea dest)
+					base = 0x9140;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return sub_word_ea_dest(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
+				default -> {
+					// sub long (ea dest)
+					base = 0x9180;
+					i = new Instruction() {
+						public int execute(int opcode) {
+							return sub_long_ea_dest(opcode);
+						}
+
+						public DisassembledInstruction disassemble(int address, int opcode) {
+							return disassembleOp(address, opcode, sz);
+						}
+					};
+				}
 			}
-			else if(sz == 1)
-			{
-				// sub word (ea dest)
-				base = 0x9140;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return sub_word_ea_dest(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Word);
-					}
-				};
-			}
-			else
-			{
-				// sub long (ea dest)
-				base = 0x9180;
-				i = new Instruction() {
-					public int execute(int opcode)
-					{
-						return sub_long_ea_dest(opcode);
-					}
-					public DisassembledInstruction disassemble(int address, int opcode)
-					{
-						return disassembleOp(address, opcode, Size.Long);
-					}
-				};
-			}
-			for(int reg = 0; reg < 8; reg++)
-			{
-				for(int ea_mode = 2; ea_mode < 8; ea_mode++)
-				{
-					for(int ea_reg = 0; ea_reg < 8; ea_reg++)
-					{
-						if(ea_mode == 7 && ea_reg > 1)
-							break;
-						is.addInstruction(base + (reg << 9) + (ea_mode << 3) + ea_reg, i);
-					}
+			for (DataRegisterDirect reg : DataRegisterDirect.all()) {
+				for (AddressingMode ea : alterableMemoryModes()) {
+					is.addInstruction(base + (reg.getRegister() << 9) + (ea.getMode() << 3) + ea.getRegister(), i);
 				}
 			}
 		}

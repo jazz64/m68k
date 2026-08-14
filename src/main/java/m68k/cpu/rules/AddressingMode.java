@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public abstract sealed class AddressingMode {
-    static final class DataRegisterDirect extends AddressingMode {
+    public static final class DataRegisterDirect extends AddressingMode {
         public final int number;
 
         DataRegisterDirect(int number) {
