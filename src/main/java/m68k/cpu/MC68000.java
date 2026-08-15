@@ -1,6 +1,8 @@
 package m68k.cpu;
 
 import m68k.cpu.instructions.*;
+import m68k.cpu.instructions.quick.ADDQ;
+import m68k.cpu.instructions.quick.SUBQ;
 
 /*
 //  M68k - Java Amiga MachineCore
