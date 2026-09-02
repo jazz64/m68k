@@ -1,10 +1,14 @@
 package miggy.cpu.instructions.sub;
 
+import m68k.cpu.*;
+import m68k.cpu.instructions.quick.SUBQ;
+import m68k.cpu.rules.AddressingMode.AddressRegisterDirect;
 import miggy.BasicSetup;
 import miggy.SystemModel;
 import miggy.SystemModel.CpuFlag;
 import org.junit.jupiter.api.Test;
 
+import static m68k.cpu.rules.AddressingMode.alterableModes;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SUBQTest extends BasicSetup {
@@ -57,5 +61,33 @@ class SUBQTest extends BasicSetup {
         assertFalse(SystemModel.CPU.isSet(CpuFlag.Z), "Check Z");
         assertTrue(SystemModel.CPU.isSet(CpuFlag.V), "Check V");
         assertFalse(SystemModel.CPU.isSet(CpuFlag.C), "Check C");
+    }
+
+    @Test
+    void register_onCommonInstance_registersCorrectNumberOfVariants() {
+        TestRegistry registry = new TestRegistry();
+        InstructionHandler instance = new SUBQ(SystemModel.CPU);
+        int sourceModes = 8;
+        int eaDestinationModes = alterableModes().size();
+        int sizes = Size.values().length;
+        int forbidden = AddressRegisterDirect.all().size();
+        int variants = sourceModes * (eaDestinationModes * sizes - forbidden);
+
+        instance.register(registry);
+
+        assertEquals(variants, registry.size());
+    }
+
+    @Test
+    void disassemble_bytewise_returnsCorrectDisassembledInstruction() {
+        final int opcode = 20736;
+        setInstruction(opcode); // subq.b   #8,d0
+        Instruction instruction = SystemModel.CPU.getInstructionAt(codebase);
+
+        DisassembledInstruction result = instruction.disassemble(codebase, opcode);
+
+        assertEquals("subq.b", result.instruction);
+        assertEquals("#8", result.op1.operand);
+        assertEquals("d0", result.op2.operand);
     }
 }
